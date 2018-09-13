@@ -15,7 +15,7 @@ namespace MyFirstMVC.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
-        public IEnumerable<PhoneOnStock> Stocks { get; set; }
+        public IEnumerable<PhoneOnStock> PhoneOnStocks { get; set; }
 
         public IEnumerable<Order> Orders { get; set; }
     }

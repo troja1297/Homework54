@@ -60,12 +60,12 @@ namespace MyFirstMVC.Models
 
             modelBuilder.Entity<PhoneOnStock>()
                 .HasOne(p => p.Phone)
-                .WithMany(p => p.Stocks)
+                .WithMany(p => p.PhoneOnStocks)
                 .HasForeignKey(p => p.PhoneId);
 
             modelBuilder.Entity<PhoneOnStock>()
                 .HasOne(p => p.Stock)
-                .WithMany(p => p.Phones)
+                .WithMany(p => p.PhoneOnStocks)
                 .HasForeignKey(p => p.StockId);
         }
     }
