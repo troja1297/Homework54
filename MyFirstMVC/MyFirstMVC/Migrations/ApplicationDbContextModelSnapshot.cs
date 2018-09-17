@@ -104,6 +104,12 @@ namespace MyFirstMVC.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stocks");
+
+                    b.HasData(
+                        new { Id = 1, Name = "Склад 1" },
+                        new { Id = 2, Name = "Склад 2" },
+                        new { Id = 3, Name = "Склад 3" }
+                    );
                 });
 
             modelBuilder.Entity("MyFirstMVC.Models.Category", b =>
@@ -133,12 +139,12 @@ namespace MyFirstMVC.Migrations
             modelBuilder.Entity("MyFirstMVC.Models.PhoneOnStock", b =>
                 {
                     b.HasOne("MyFirstMVC.Models.Phone", "Phone")
-                        .WithMany("Stocks")
+                        .WithMany("PhoneOnStocks")
                         .HasForeignKey("PhoneId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MyFirstMVC.Models.Stock", "Stock")
-                        .WithMany("Phones")
+                        .WithMany("PhoneOnStocks")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

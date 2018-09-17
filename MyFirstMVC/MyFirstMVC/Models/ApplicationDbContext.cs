@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace MyFirstMVC.Models
 {
@@ -67,6 +69,9 @@ namespace MyFirstMVC.Models
                 .HasOne(p => p.Stock)
                 .WithMany(p => p.PhoneOnStocks)
                 .HasForeignKey(p => p.StockId);
+
+            modelBuilder.Entity<Stock>()
+                .HasData(JsonConvert.DeserializeObject<Stock[]>(File.ReadAllText("Seed/stocks.json")));
         }
     }
 }

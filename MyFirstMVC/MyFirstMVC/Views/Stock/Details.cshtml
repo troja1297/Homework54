@@ -1,0 +1,25 @@
+﻿@model Stock
+
+@{
+    ViewData["Title"] = $"{Model.Name}";
+}
+
+<h2>@Model.Name</h2>
+
+<div>
+    <h4>Склад</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Download" asp-route-id="@Model.Id">Скачать</a> |
+    <a asp-action="Index">Показать список</a>
+</div>
