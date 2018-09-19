@@ -75,7 +75,13 @@ namespace MyFirstMVC.Controllers
         {
             try
             {
-                // TODO: Add insert logic here
+                //CRUD
+                //create - post
+                //read - index (get) - не меняет состояние приложения
+                //update - edit (post)
+                //delete - post
+                _context.Stocks.Add(stock);
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
@@ -94,7 +100,7 @@ namespace MyFirstMVC.Controllers
         // POST: Stock/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Stock collection)
         {
             try
             {
@@ -109,25 +115,28 @@ namespace MyFirstMVC.Controllers
         }
 
         // GET: Stock/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Remove(int id)
         {
-            return View();
+            Stock stock = _context.Stocks.Find(id);
+            return View(stock);
         }
 
         // POST: Stock/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult RemoveStock(int Id)
         {
+            Stock stock = _context.Stocks.Find(Id);
             try
             {
-                // TODO: Add delete logic here
+                _context.Stocks.Remove(stock);
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View("Remove", stock);
             }
         }
     }
