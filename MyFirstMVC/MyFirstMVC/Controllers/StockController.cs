@@ -75,11 +75,6 @@ namespace MyFirstMVC.Controllers
         {
             try
             {
-                //CRUD
-                //create - post
-                //read - index (get) - не меняет состояние приложения
-                //update - edit (post)
-                //delete - post
                 _context.Stocks.Add(stock);
                 _context.SaveChanges();
 
@@ -94,17 +89,19 @@ namespace MyFirstMVC.Controllers
         // GET: Stock/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Stock stock = _context.Stocks.Find(id);
+            return View(stock);
         }
 
         // POST: Stock/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, Stock collection)
+        public ActionResult Edit(Stock stock)
         {
             try
             {
-                // TODO: Add update logic here
+                _context.Stocks.Update(stock);
+                _context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
