@@ -15,6 +15,7 @@ namespace MyFirstMVC.Models
         public DbSet<Category> Categories { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<PhoneOnStock> PhonesOnStocks { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -70,8 +71,28 @@ namespace MyFirstMVC.Models
                 .WithMany(p => p.PhoneOnStocks)
                 .HasForeignKey(p => p.StockId);
 
+            modelBuilder.Entity<Category>()
+               .HasData(JsonConvert.DeserializeObject<Category[]>(File.ReadAllText("Seed/categories.json")));
+
+            modelBuilder.Entity<Company>()
+                .HasData(JsonConvert.DeserializeObject<Company[]>(File.ReadAllText("Seed/companies.json")));
+
+            modelBuilder.Entity<Phone>()
+                .HasData(JsonConvert.DeserializeObject<Phone[]>(File.ReadAllText("Seed/phones.json")));
+
             modelBuilder.Entity<Stock>()
                 .HasData(JsonConvert.DeserializeObject<Stock[]>(File.ReadAllText("Seed/stocks.json")));
+
+            modelBuilder.Entity<Phone>()
+                .HasOne(p => p.Company)
+                .WithMany(p => p.Phones)
+                .HasForeignKey(p => p.CompanyId);
+
+            modelBuilder.Entity<Company>()
+               .HasMany(c => c.Phones)
+               .WithOne(c => c.Company)
+               .HasPrincipalKey(c => c.Id)
+               .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,53 +1,63 @@
-﻿@model IEnumerable<MyFirstMVC.Models.Phone>
+﻿@using MyFirstMVC.ViewModels
+
+@model IndexViewModel
 
 @{
-    ViewData["Title"] = "Index";
+
+    ViewData["Title"] = "Home Page";
+
 }
 
-<h2>Index</h2>
+<br />
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@using (Html.BeginForm("Index", "Phones", FormMethod.Get))
+
+{
+    @Html.Label("Name", "Модель ")
+    @Html.TextBox("name", Model.Name)
+
+    <select name="companyId" class="form-control">
+        <option></option>
+        @foreach (Company comp in Model.Companies)
+        {
+            if (Model.Company != null && Model.Company.Id == comp.Id)
+            {
+                <option value="@comp.Id" selected="selected">@comp.Name</option>
+            }
+            else
+            {
+                <option value="@comp.Id">@comp.Name</option>
+            }
+
+        }
+    </select>
+
+    <input type="submit" class="btn btn-success" />
 }
-    </tbody>
+
+<br />
+
+
+<table class="table table-bordered">
+
+    @foreach (Phone p in Model.Phones)
+
+    {
+
+        <tr>
+
+            <td>@p.Name</td>
+
+            <td>
+
+                <a asp-area="" asp-controller="Phones" asp-action="Index" asp-route-companyId="@p.CompanyId">@p.Company?.Name</a>
+            </td>
+            <td>@p.Price</td>
+
+        </tr>
+
+    }
+
 </table>
+
+@{ await Html.RenderPartialAsync("_Calendar"); }

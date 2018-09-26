@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyFirstMVC.Models;
+using MyFirstMVC.ViewModels;
 
 namespace MyFirstMVC.Controllers
 {
@@ -19,10 +20,32 @@ namespace MyFirstMVC.Controllers
         }
 
         // GET: Phones
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? companyId, string name)
         {
-            var applicationDbContext = _context.Phones.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
+            List<Company> companies = _context.Companies.ToList();
+
+            //companies.Insert(0, new Company { Id = 0, Name = "Все" });
+
+            var phones = _context.Phones.Include(p => p.Category).Include(p => p.Company).ToList();
+
+            IndexViewModel ivm = new IndexViewModel();
+
+            if (companyId.HasValue)
+            {
+                phones = phones.Where(p => p.Company.Id == companyId.Value).ToList();
+                ivm.Company = companies.FirstOrDefault(c => c.Id == companyId.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                phones = phones.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+                ivm.Name = name;
+            }
+
+            ivm.Companies = companies;
+            ivm.Phones = phones;
+            
+            return View(ivm);
         }
 
         // GET: Phones/Details/5
