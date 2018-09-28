@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFirstMVC.Models;
 
 namespace MyFirstMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180927133242_CreateDateTimeFieldInPhones")]
+    partial class CreateDateTimeFieldInPhones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,8 +108,8 @@ namespace MyFirstMVC.Migrations
                     b.ToTable("Phones");
 
                     b.HasData(
-                        new { Id = 1, AssemblyDate = new DateTime(2018, 8, 20, 12, 50, 0, 228, DateTimeKind.Unspecified), CategoryId = 1, CompanyId = 1, Name = "Iphone 4", Price = 200.0 },
-                        new { Id = 2, AssemblyDate = new DateTime(1999, 8, 20, 12, 50, 0, 0, DateTimeKind.Unspecified), CategoryId = 2, CompanyId = 2, Name = "Xperia", Price = 100.0 }
+                        new { Id = 1, AssemblyDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CategoryId = 1, CompanyId = 1, Name = "Iphone 4", Price = 200.0 },
+                        new { Id = 2, AssemblyDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), CategoryId = 2, CompanyId = 2, Name = "Xperia", Price = 100.0 }
                     );
                 });
 

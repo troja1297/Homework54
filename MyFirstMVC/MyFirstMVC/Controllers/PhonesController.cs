@@ -70,7 +70,8 @@ namespace MyFirstMVC.Controllers
         // GET: Phones/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["Companies"] = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
@@ -87,7 +88,8 @@ namespace MyFirstMVC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", phone.CategoryId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["Companies"] = new SelectList(_context.Companies, "Id", "Name");
             return View(phone);
         }
 

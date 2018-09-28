@@ -4,6 +4,7 @@
     "Name": "Iphone 4",
     "CompanyId": 1,
     "Price": 200.00,
+    "AssemblyDate": "2018-08-20 12:50:00.228",
     "CategoryId": 1
   },
   {
@@ -11,6 +12,7 @@
     "Name": "Xperia",
     "CompanyId": 2,
     "Price": 100.00,
+    "AssemblyDate": "1999-08-20 12:50:00.000",
     "CategoryId": 2
   }
 ]
