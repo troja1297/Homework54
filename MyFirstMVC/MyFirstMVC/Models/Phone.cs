@@ -7,17 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MyFirstMVC.Models
 {
-    public class Phone
+    public class Phone : Entity
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "укажи название телефона")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "длина названия от 1 до 50")]
-        [Remote(action: "ValidateName", controller: "Validation", ErrorMessage = "не ругайся")]
+        //[Remote(action: "ValidateName", controller: "Validation", ErrorMessage = "не ругайся")]
+        [Remote(action: "ValidateName", controller: "Validation", ErrorMessage = "такой телефон уже есть")]
         public string Name { get; set; }
         
         [Required]
-        [Range(1.0, 1600.0)]
         public double Price { get; set; }
 
         //[Range(typeof(DateTime), "1900-01-01 00:00:00.228", "2100-01-01 00:00:00.228")]
@@ -34,5 +32,28 @@ namespace MyFirstMVC.Models
         public IEnumerable<PhoneOnStock> PhoneOnStocks { get; set; }
 
         public IEnumerable<Order> Orders { get; set; }
+
+        public IEnumerable<Feedback> Feedbacks { get; set; }
+    }
+
+    public class EditPhoneViewModel : Phone
+    {
+        [Required(ErrorMessage = "укажи название телефона")]
+        [StringLength(50, MinimumLength = 1, ErrorMessage = "длина названия от 1 до 50")]
+        //[Remote(action: "ValidateName", controller: "Validation", ErrorMessage = "не ругайся")]
+        public new string Name { get; set; }
+
+        public static EditPhoneViewModel Cast(Phone phone)
+        {
+            return new EditPhoneViewModel()
+            {
+                Name = phone.Name,
+                Id = phone.Id,
+                CategoryId = phone.CategoryId,
+                CompanyId = phone.CompanyId,
+                AssemblyDate = phone.AssemblyDate,
+                Price = phone.Price
+            };
+        }
     }
 }

@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace MyFirstMVC.Models
 {
-    public class Stock
+    public class Stock : Entity
     {
-        public int Id { get; set; }
-
         [Display(Name = "Наименование")]
         public string Name { get; set; }
 

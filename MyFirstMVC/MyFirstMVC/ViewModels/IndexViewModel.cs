@@ -13,4 +13,11 @@ namespace MyFirstMVC.ViewModels
         public Company Company { get; set; }
         public string Name { get; set; }
     }
+
+    public class DetailsViewModel
+    {
+        public Phone Phone { get; set; }
+        public Feedback Feedback { get; set; }
+        public IEnumerable<Feedback> Feedbacks { get; set; }
+    }
 }

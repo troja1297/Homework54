@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyFirstMVC.Models;
+using MyFirstMVC.Services;
 
 namespace MyFirstMVC
 {
@@ -32,6 +33,7 @@ namespace MyFirstMVC
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
+            services.AddTransient<PhoneValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

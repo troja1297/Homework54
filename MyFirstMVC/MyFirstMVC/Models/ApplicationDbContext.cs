@@ -16,6 +16,7 @@ namespace MyFirstMVC.Models
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<PhoneOnStock> PhonesOnStocks { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
@@ -32,6 +33,17 @@ namespace MyFirstMVC.Models
 
             modelBuilder.Entity<Phone>()
                 .HasMany(p => p.Orders)
+                .WithOne(p => p.Phone)
+                .HasPrincipalKey(p => p.Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(o => o.Phone)
+                .WithMany(o => o.Feedbacks)
+                .HasForeignKey(o => o.PhoneId);
+
+            modelBuilder.Entity<Phone>()
+                .HasMany(p => p.Feedbacks)
                 .WithOne(p => p.Phone)
                 .HasPrincipalKey(p => p.Id)
                 .OnDelete(DeleteBehavior.Restrict);

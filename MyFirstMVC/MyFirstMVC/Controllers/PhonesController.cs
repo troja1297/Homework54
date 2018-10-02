@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyFirstMVC.Models;
+using MyFirstMVC.Services;
 using MyFirstMVC.ViewModels;
 
 namespace MyFirstMVC.Controllers
@@ -13,10 +14,13 @@ namespace MyFirstMVC.Controllers
     public class PhonesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly PhoneValidator _phoneValidator;
 
-        public PhonesController(ApplicationDbContext context)
+        public PhonesController(ApplicationDbContext context,
+            PhoneValidator phoneValidator)
         {
             _context = context;
+            _phoneValidator = phoneValidator;
         }
 
         // GET: Phones
@@ -64,7 +68,16 @@ namespace MyFirstMVC.Controllers
                 return NotFound();
             }
 
-            return View(phone);
+            ViewBag.RateList = new SelectList(new[] { 1, 2, 3, 4, 5 });
+            ViewBag.PhoneId = phone.Id;
+
+            DetailsViewModel model = new DetailsViewModel()
+            {
+                Phone = phone,
+                Feedback = new Feedback(),
+                Feedbacks = _context.Feedbacks.Where(f => f.PhoneId == phone.Id)
+            };
+            return View(model);
         }
 
         // GET: Phones/Create
@@ -101,13 +114,15 @@ namespace MyFirstMVC.Controllers
                 return NotFound();
             }
 
-            var phone = await _context.Phones.FindAsync(id);
+            Phone phone = await _context.Phones.FindAsync(id);
+
             if (phone == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", phone.CategoryId);
-            return View(phone);
+            
+
+            return View(GetEditModel(phone));
         }
 
         // POST: Phones/Edit/5
@@ -115,35 +130,53 @@ namespace MyFirstMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Company,Price,CategoryId")] Phone phone)
+        public async Task<IActionResult> Edit(int id, Phone phone)
         {
             if (id != phone.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            List<ErrorMessage> errors = _phoneValidator.Validate(phone);
+
+            foreach (ErrorMessage errorMessage in errors)
             {
-                try
+                if (!errorMessage.IsValid)
                 {
-                    _context.Update(phone);
-                    await _context.SaveChangesAsync();
+                    ModelState.AddModelError(errorMessage.FieldName, errorMessage.Message);
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PhoneExists(phone.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", phone.CategoryId);
-            return View(phone);
+
+            if (!ModelState.IsValid)
+            {
+                return View(GetEditModel(phone));
+            }
+            try
+            {
+                _context.Update(phone);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PhoneExists(phone.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+            
+            
+        }
+
+        private EditPhoneViewModel GetEditModel(Phone phone)
+        {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", phone.Id);
+            ViewData["Companies"] = new SelectList(_context.Companies, "Id", "Name", phone.Id);
+            return EditPhoneViewModel.Cast(phone);
         }
 
         // GET: Phones/Delete/5
@@ -179,6 +212,13 @@ namespace MyFirstMVC.Controllers
         private bool PhoneExists(int id)
         {
             return _context.Phones.Any(e => e.Id == id);
+        }
+
+        public IActionResult CreateReview(Feedback feedback)
+        {
+            _context.Feedbacks.Add(feedback);
+            _context.SaveChanges();
+            return RedirectToAction("Details", "Phones", new {id = feedback.PhoneId});
         }
     }
 }

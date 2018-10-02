@@ -1,0 +1,27 @@
+﻿@model Feedback
+
+@using (Html.BeginForm("CreateReview", "Phones", FormMethod.Post, true))
+{
+    <div style="width: 400px; border-radius: 15px;  padding: 10px;box-shadow: 0px 3px 18px -1px rgba(0,0,0,0.75); position: absolute; left: 50%; top: 15%; margin-left: -200px;">
+        <div>
+            @Html.Label("Author", "Ваше имя")
+            @Html.TextBox("Author", "", "", new{@class ="form-control"})
+            @Html.ValidationMessageFor(p => p.Author)
+        </div>
+        <div style="max-width: 400px;">
+            @Html.Label("Message", "Ваш отзыв")
+            @Html.TextArea("Message", "", 5, 3, new{@class = "form-control", placeholder ="Напишите здесь что нибудь"})
+            @Html.ValidationMessageFor(p => p.Message)
+        </div>
+        <div>
+            @Html.Label("Rating", "Поставьте оценку")
+            @Html.DropDownList("Rating", ViewBag.RateList as SelectList, "Select a rate", new{@class ="form-control"})
+            @Html.ValidationMessageFor(p => p.Rating, "", new{@class ="alert-warning"})
+            <input type="hidden" name="PhoneId" value="@ViewBag.PhoneId" />
+        </div>
+        <div>
+            <input style="margin-top: 10px;" type="submit" class="btn btn-success form-control"/>
+        </div>
+    </div>
+}
+
