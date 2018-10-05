@@ -17,6 +17,7 @@ namespace MyFirstMVC.Models
         public DbSet<PhoneOnStock> PhonesOnStocks { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Shaurma> Shaurmas { get; set; }
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {

@@ -34,6 +34,12 @@ namespace MyFirstMVC
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 
             services.AddTransient<PhoneValidator>();
+            services.AddTransient<FeedbackValidator>();
+
+            services.AddTransient<TransientObject>();
+            services.AddScoped<ScopedObject>();
+            services.AddSingleton<SingletonObject>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,22 +11,34 @@ using MyFirstMVC.ViewModels;
 
 namespace MyFirstMVC.Controllers
 {
+    public class PhoneViewModel
+    {
+        public string Name { get; set; }
+        public double Price { get; set; }
+    }
+
     public class PhonesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly PhoneValidator _phoneValidator;
+        private readonly FeedbackValidator _feedbackValidator;
 
         public PhonesController(ApplicationDbContext context,
-            PhoneValidator phoneValidator)
+            PhoneValidator phoneValidator,
+            FeedbackValidator feedbackValidator)
         {
             _context = context;
             _phoneValidator = phoneValidator;
+            _feedbackValidator = feedbackValidator;
         }
 
         // GET: Phones
         public async Task<IActionResult> Index(int? companyId, string name)
         {
+            //CRUD
             List<Company> companies = _context.Companies.ToList();
+
+           
 
             //companies.Insert(0, new Company { Id = 0, Name = "Все" });
 
@@ -62,6 +74,7 @@ namespace MyFirstMVC.Controllers
 
             var phone = await _context.Phones
                 .Include(p => p.Category)
+                .Include(p => p.Feedbacks)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (phone == null)
             {
@@ -139,13 +152,7 @@ namespace MyFirstMVC.Controllers
 
             List<ErrorMessage> errors = _phoneValidator.Validate(phone);
 
-            foreach (ErrorMessage errorMessage in errors)
-            {
-                if (!errorMessage.IsValid)
-                {
-                    ModelState.AddModelError(errorMessage.FieldName, errorMessage.Message);
-                }
-            }
+            CheckErrors(errors);
 
             if (!ModelState.IsValid)
             {
@@ -153,6 +160,9 @@ namespace MyFirstMVC.Controllers
             }
             try
             {
+                phone = _context.Phones.FirstOrDefault(c => c.Id == id);
+                phone.Name = "Edited name";
+
                 _context.Update(phone);
                 await _context.SaveChangesAsync();
             }
@@ -179,7 +189,9 @@ namespace MyFirstMVC.Controllers
             return EditPhoneViewModel.Cast(phone);
         }
 
+
         // GET: Phones/Delete/5
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -198,7 +210,9 @@ namespace MyFirstMVC.Controllers
             return View(phone);
         }
 
+
         // POST: Phones/Delete/5
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -214,11 +228,40 @@ namespace MyFirstMVC.Controllers
             return _context.Phones.Any(e => e.Id == id);
         }
 
+        [HttpPost]
         public IActionResult CreateReview(Feedback feedback)
         {
+            var errors = _feedbackValidator.Validate(feedback);
+
+            CheckErrors(errors);
+
+            if (!ModelState.IsValid)
+            {
+                int phoneId = feedback.PhoneId;
+                ViewBag.RateList = new SelectList(new[] { 1, 2, 3, 4, 5 });
+                ViewBag.PhoneId = phoneId;
+                return View("Details", new DetailsViewModel()
+                {
+                    Phone = _context.Phones.Find(phoneId),
+                    Feedback = new Feedback(),
+                    Feedbacks = _context.Feedbacks.Where(f => f.PhoneId == phoneId)
+                });
+            }
+
             _context.Feedbacks.Add(feedback);
             _context.SaveChanges();
             return RedirectToAction("Details", "Phones", new {id = feedback.PhoneId});
+        }
+
+        private void CheckErrors(List<ErrorMessage> errors)
+        {
+            foreach (ErrorMessage errorMessage in errors)
+            {
+                if (!errorMessage.IsValid)
+                {
+                    ModelState.AddModelError(errorMessage.FieldName, errorMessage.Message);
+                }
+            }
         }
     }
 }

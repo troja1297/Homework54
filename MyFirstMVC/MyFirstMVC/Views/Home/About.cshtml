@@ -1,8 +1,13 @@
-﻿@{
+﻿@model Foo
+@using MyFirstMVC.Controllers
+@{
     ViewData["Title"] = "About";
 }
 <h2>@ViewData["Title"]</h2>
 <h3>@ViewBag.Message</h3>
 <h3>@{ var Array = ViewBag.Message is string[]; }</h3>
+
+<h2>@{ string a = ((Status) ViewBag.Int).ToString();}</h2>
+<text>@((Status)Model.Status)</text>
 
 <p>Use this area to provide additional information.</p>

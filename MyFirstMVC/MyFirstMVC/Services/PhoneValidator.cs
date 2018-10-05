@@ -6,11 +6,6 @@ using MyFirstMVC.Models;
 
 namespace MyFirstMVC.Services
 {
-    public interface IValidator<in T> where T : Entity
-    {
-        List<ErrorMessage> Validate(T entity);
-    }
-
     public class PhoneValidator : IValidator<Phone>
     {
         public List<ErrorMessage> Validate(Phone phone)
@@ -50,19 +45,5 @@ namespace MyFirstMVC.Services
             }
             return ErrorMessage.Correct;
         }
-    }
-
-    public class ErrorMessage
-    {
-        public bool IsValid { get; set; }
-        public string FieldName { get; set; }
-        public string Message { get; set; }
-
-        public static ErrorMessage Correct =>
-            new ErrorMessage()
-            {
-                IsValid = true
-            };
-
     }
 }
