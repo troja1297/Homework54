@@ -11,10 +11,16 @@ using MyFirstMVC.ViewModels;
 
 namespace MyFirstMVC.Controllers
 {
-    public class PhoneViewModel
+    public enum SortPhones
     {
-        public string Name { get; set; }
-        public double Price { get; set; }
+        NameAsc,
+        NameDesc,
+        CompanyAsc,
+        CompanyDesc,
+        CategotyAsc,
+        CategoryDesc,
+        PriceAsc,
+        PriceDesc
     }
 
     public class PhonesController : Controller
@@ -32,36 +38,99 @@ namespace MyFirstMVC.Controllers
             _feedbackValidator = feedbackValidator;
         }
 
-        // GET: Phones
-        public async Task<IActionResult> Index(int? companyId, string name)
+         // GET: Shaurmas
+        public async Task<IActionResult> Index(
+            string name,
+            double? priceFrom,
+            double? priceTo,
+            int? categoryId,
+            int? companyId,
+            int page = 1,
+            SortPhones sortPhones = SortPhones.CompanyDesc)
         {
-            //CRUD
-            List<Company> companies = _context.Companies.ToList();
 
-           
-
-            //companies.Insert(0, new Company { Id = 0, Name = "Все" });
-
-            var phones = _context.Phones.Include(p => p.Category).Include(p => p.Company).ToList();
-
-            IndexViewModel ivm = new IndexViewModel();
-
-            if (companyId.HasValue)
-            {
-                phones = phones.Where(p => p.Company.Id == companyId.Value).ToList();
-                ivm.Company = companies.FirstOrDefault(c => c.Id == companyId.Value);
-            }
+            IQueryable<Phone> phones = _context.Phones.Include(p => p.Category);
 
             if (!string.IsNullOrWhiteSpace(name))
             {
-                phones = phones.Where(p => p.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
-                ivm.Name = name;
+                phones = phones.Where(s => s.Name.Contains(name));
             }
 
-            ivm.Companies = companies;
-            ivm.Phones = phones;
+            if (priceFrom.HasValue)
+            {
+                phones = phones.Where(s => s.Price >= priceFrom.Value);
+            }
+
+            if (priceTo.HasValue)
+            {
+                phones = phones.Where(s => s.Price <= priceTo.Value);
+            }
+
+            if (companyId.HasValue)
+            {
+                phones = phones.Where(s => s.CompanyId == companyId.Value);
+            }
             
-            return View(ivm);
+            if (categoryId.HasValue)
+            {
+                phones = phones.Where(s => s.CategoryId == categoryId.Value);
+            }
+
+            ViewBag.NameSort = sortPhones == SortPhones.NameAsc ? SortPhones.NameDesc : SortPhones.NameAsc;
+            ViewBag.CompanySort = sortPhones == SortPhones.CompanyAsc ? SortPhones.CompanyDesc : SortPhones.CompanyAsc;
+            ViewBag.CategorySort = sortPhones == SortPhones.CategotyAsc ? SortPhones.CategoryDesc : SortPhones.CategotyAsc;
+            ViewBag.PriceSort = sortPhones == SortPhones.PriceAsc ? SortPhones.PriceDesc : SortPhones.PriceAsc;
+
+            switch (sortPhones)
+            {
+                case SortPhones.NameAsc:
+                    phones = phones.OrderBy(s => s.Name);
+                    break;
+                case SortPhones.NameDesc:
+                    phones = phones.OrderByDescending(s => s.Name);
+                    break;
+                case SortPhones.PriceAsc:
+                    phones = phones.OrderBy(s => s.Price);
+                    break;
+                case SortPhones.PriceDesc:
+                    phones = phones.OrderByDescending(s => s.Price);
+                    break;
+                case SortPhones.CategotyAsc:
+                    phones = phones.OrderBy(s => s.Category.Name);
+                    break;
+                case SortPhones.CategoryDesc:
+                    phones = phones.OrderByDescending(s => s.Category.Name);
+                    break;
+                case SortPhones.CompanyAsc:
+                    phones = phones.OrderBy(s => s.Company.Name);
+                    break;
+                case SortPhones.CompanyDesc:
+                    phones = phones.OrderByDescending(s => s.Company.Name);
+                    break;
+            }
+            int pageSize = 4;
+            var count = await phones.CountAsync();
+ 
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+
+            
+            var items = await phones.Skip(((page - 1) * pageSize)).Take(pageSize).ToListAsync();
+            PhoneIndexViewModel model = new PhoneIndexViewModel()
+            {
+                Phones = items,
+                Name = name,
+                PageViewModel = pageViewModel,
+                CompanyId = companyId,
+                CategoryId = categoryId,
+                PriceFrom = priceFrom,
+                PriceTo = priceTo,
+                Categories = new SelectList(_context.Categories, "Id", "Name"),
+                Companies = new SelectList(_context.Companies, "Id", "Name")
+            };
+            
+            
+
+            return View(model);
         }
 
         // GET: Phones/Details/5

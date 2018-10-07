@@ -11,4 +11,14 @@
     "Id": 3,
     "Name": "Nokia"
   }
+,
+  {
+    "Id": 4,
+    "Name": "Xiaomi"
+  }
+,
+  {
+    "Id": 5,
+    "Name": "Sony"
+  }
 ]

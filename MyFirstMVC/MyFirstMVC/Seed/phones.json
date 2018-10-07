@@ -9,10 +9,42 @@
   },
   {
     "Id": 2,
-    "Name": "Xperia",
+    "Name": "Xperia Y",
+    "CompanyId": 5,
+    "Price": 100.00,
+    "AssemblyDate": "1999-08-20 12:50:00.000",
+    "CategoryId": 2
+  },
+  {
+    "Id": 3,
+    "Name": "Mi mix 2",
+    "CompanyId":4,
+    "Price": 300.00,
+    "AssemblyDate": "1999-08-20 12:50:00.000",
+    "CategoryId": 2
+  },
+  {
+    "Id": 4,
+    "Name": "Xperia Z",
     "CompanyId": 2,
     "Price": 100.00,
     "AssemblyDate": "1999-08-20 12:50:00.000",
     "CategoryId": 2
+  },
+  {
+    "Id": 6,
+    "Name": "Mi mix 3",
+    "CompanyId":4,
+    "Price": 300.00,
+    "AssemblyDate": "1999-08-20 12:50:00.000",
+    "CategoryId": 2
+  },
+  {
+    "Id": 7,
+    "Name": "Iphone X",
+    "CompanyId": 1,
+    "Price": 1200.00,
+    "AssemblyDate": "2018-08-20 12:50:00.228",
+    "CategoryId": 1
   }
 ]

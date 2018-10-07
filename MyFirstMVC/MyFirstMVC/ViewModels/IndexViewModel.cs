@@ -7,12 +7,46 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace MyFirstMVC.ViewModels
 {
-    public class IndexViewModel
+    public class PageViewModel
+    {
+        public int PageNumber { get; private set; }
+        public int TotalPages { get; private set; }
+ 
+        public PageViewModel(int count, int pageNumber, int pageSize)
+        {
+            PageNumber = pageNumber;
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
+        }
+ 
+        public bool HasPreviousPage
+        {
+            get
+            {
+                return (PageNumber > 1);
+            }
+        }
+ 
+        public bool HasNextPage
+        {
+            get
+            {
+                return (PageNumber < TotalPages);
+            }
+        }
+    }
+    
+    public class PhoneIndexViewModel
     {
         public IEnumerable<Phone> Phones { get; set; }
-        public IEnumerable<Company> Companies { get; set; }
-        public Company Company { get; set; }
         public string Name { get; set; }
+        public double? PriceFrom { get; set; }
+        public double? PriceTo { get; set; }
+        public int? CategoryId { get; set; }
+        public int? CompanyId { get; set; }
+        public PageViewModel PageViewModel { get; set; }
+        
+        public SelectList Companies { get; set; }
+        public SelectList Categories { get; set; }
     }
 
     public class DetailsViewModel
